@@ -208,7 +208,7 @@ const JsMB = {
         /*this.ctx.beginPath();
         this.ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
         this.ctx.stroke();*/
-        this.gfx.pie(x, y, radius, this.deg(startAngle), this.deg(endAngle),)
+        this.gfx.pie(x, y, radius, this.deg(startAngle), this.deg(endAngle), this.ctx.color);
         return this;
     },
 
