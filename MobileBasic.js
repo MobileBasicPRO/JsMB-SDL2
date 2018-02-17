@@ -5,7 +5,7 @@
  * ================================//
  */
 
-//JsMB-SDL2 Alpha 11
+//JsMB-SDL2 Alpha 11 58884391d121876a2269f10202c65a9761b25e78
 
 'use strict';
 
@@ -371,13 +371,13 @@ const JsMB = {
      * @returns {this}
      */
     fillTriangle(x1, y1, x2, y2, x3, y3) {
-        this.ctx.beginPath();
+        /* this.ctx.beginPath();
         this.ctx.moveTo(x1, y1);
         this.ctx.lineTo(x2, y2);
         this.ctx.lineTo(x3, y3);
         this.ctx.lineTo(x1, y1);
         this.ctx.closePath();
-        this.ctx.fill();
+        this.ctx.fill(); */
 
         return this;
     },
@@ -434,13 +434,9 @@ const JsMB = {
      * @returns {this}
      */
     drawTriangle(x1, y1, x2, y2, x3, y3) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1, y1);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.lineTo(x3, y3);
-        this.ctx.lineTo(x1, y1);
-        this.ctx.closePath();
-        this.ctx.stroke();
+        this.drawLine(x1, y1, x2, y2);
+        this.drawLine(x2, y2, x3, y3);
+        this.drawLine(x3, y3, x1, y1);
 
         return this;
     },
@@ -452,7 +448,7 @@ const JsMB = {
      * @returns {this}
      */
     drawString(text, x, y) {
-        this.ctx.fillText(text, x, y);
+        /* this.ctx.fillText(text, x, y); */
         return this;
     },
 
@@ -471,8 +467,8 @@ const JsMB = {
      * @returns {this}
      */
     setFontSize(size) {
-        this.ctx.font = size + 'px ' + this.$Font.family;
-        this.$Font.size = size;
+        /* this.ctx.font = size + 'px ' + this.$Font.family;
+        this.$Font.size = size; */
         return this;
     },
 
@@ -481,8 +477,8 @@ const JsMB = {
      * @returns {this}
      */
     setFont(family) {
-        this.ctx.font = this.$Font.size + 'px ' + family;
-        this.$Font.family = family;
+        /* this.ctx.font = this.$Font.size + 'px ' + family;
+        this.$Font.family = family; */
         return this;
     },
 
@@ -494,7 +490,8 @@ const JsMB = {
      * @returns {this}
      */
     makeLinearGradient(x, y, x1, y1) {
-        return this.ctx.createLinearGradient(x, y, x1, y1);
+        /* return this.ctx.createLinearGradient(x, y, x1, y1); */
+        return null;
     },
 
     /** Создает радиальный (круговой) градиент
@@ -507,7 +504,8 @@ const JsMB = {
      * @returns {this}
      */
     makeRadialGradient(x, y, r, x1, y1, r1) {
-        return this.ctx.createRadialGradient(x, y, r, x1, y1, r1);
+        /* return this.ctx.createRadialGradient(x, y, r, x1, y1, r1); */
+        return null;
     },
 
     /** Задать цвет градиенту
@@ -517,7 +515,7 @@ const JsMB = {
      * @returns {this}
      */
     setGradientColor(g, pos, color) {
-        g.addColorStop(pos, color);
+        // g.addColorStop(pos, color);
         return this;
     },
 
@@ -948,14 +946,14 @@ const JsMB = {
 
     /** Получить данные из хранилища
      * @param  {string} name - Название ячейки
-     * @returns {this}
+     * @returns {object}
      */
     localReadData(name) {
-        try {
+        /* try {
             return this.parseJSON(window.localStorage.getItem(name));
         } catch (e) {
             return window.localStorage.getItem(name);
-        }
+        } */
     },
 
     /** Возвращает объект из JSON строки
@@ -992,11 +990,12 @@ const JsMB = {
      * @returns {this}
      */
     include(file) {
-        const e = document.createElement('script');
+        //TODO:FIXME:
+        /* const e = document.createElement('script');
 
         e.src = file;
         e.type = 'text/javascript';
-        document.getElementById('modules').appendChild(e);
+        document.getElementById('modules').appendChild(e); */
         return this;
     },
 
@@ -1032,7 +1031,6 @@ const JsMB = {
      */
     screenWidth() {
         return this.c.size.w;
-
     },
 
     /** Возвращает высоту экрана
@@ -1098,7 +1096,7 @@ const JsMB = {
      * @returns {this}
      */
     exit() {
-        window.close();
+        process.exit(0);
         return this;
     },
 
@@ -1186,7 +1184,7 @@ const JsMB = {
         }
     },
 
-    // Обработчики событий
+    // Обработчики событий TODO:
     _eventListeners() {
         // window.onClick =
         //     window.onMouseDown = window.onMouseMove = window.onMouseUp = window.onKeyDown = window.onKeyPress = window.onKeyUp = window.onRightClick = window.Loop = () => {};
