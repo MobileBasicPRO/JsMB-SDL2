@@ -62,6 +62,10 @@ const JsMB = {
      */
     'DEG2RAD': Math.PI / 180,
 
+    /** Цвет фона по умолчанию
+     */
+    'BGCOLOR': 0xFF000000,
+
     __preinit() {
         for (const i in this) {
             if (typeof this[i] === 'function') this[i] = this[i].bind(this);
@@ -202,7 +206,7 @@ const JsMB = {
      * @returns {this}
      */
     drawRect(x, y, w, h) {
-        this.ctx.strokeRect(x, y, w, h);
+        this.ctx.drawRect([x, y, x1, y1]);
         return this;
     },
 
@@ -212,7 +216,7 @@ const JsMB = {
      * @returns {this}
      */
     drawPlot(x, y) {
-        this.fillRect(x, y, 1, 1);
+        this.ctx.drawPoint([[x, y]]);
         return this;
     },
 
@@ -224,7 +228,10 @@ const JsMB = {
      * @returns {this}
      */
     clearRect(x, y, w, h) {
-        this.ctx.clearRect(x, y, w, h);
+        const tmp = this.ctx.color;
+        this.setColor(this.BGCOLOR);
+        this.fillRect(x, y, w, h);
+        this.ctx.color = tmp;
         return this;
     },
 
@@ -236,10 +243,7 @@ const JsMB = {
      * @returns {this}
      */
     drawLine(x1, y1, x2, y2) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1, y1);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.stroke();
+        this.gfx.line(x1, y1, x2, y2, this.ctx.color, this._lineWidth);
         return this;
     },
 
@@ -271,12 +275,15 @@ const JsMB = {
      * @returns {this}
      */
     drawArc(x, y, radius,
-        startAngle = (15 * Math.PI / 7),
-        endAngle = (13 * Math.PI / 2),
-        counterClockwise = false) {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
-        this.ctx.stroke();
+            startAngle,// = (15 * Math.PI / 7),
+            endAngle,// = (13 * Math.PI / 2),
+            counterClockwise = false) {
+
+        if(!startAngle) {
+            this.gfx.ellipse(x, y, radius, radius, this.ctx.color)
+        } else {
+            this.gfx.pie(x, y, radius, this.deg(startAngle), this.deg(endAngle), this.ctx.color);
+        }
         return this;
     },
 
@@ -290,9 +297,10 @@ const JsMB = {
      * @returns {this}
      */
     fillArc(x, y, radius,
-        startAngle = (15 * Math.PI / 7),
-        endAngle = (13 * Math.PI / 2),
-        counterClockwise = false) {
+            startAngle = (15 * Math.PI / 7),
+            endAngle = (13 * Math.PI / 2),
+            counterClockwise = false) {
+
         this.ctx.beginPath();
         this.ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
         this.ctx.fill();
@@ -311,14 +319,14 @@ const JsMB = {
      * @returns {this}
      */
     fillRect4(x1, y1, x2, y2, x3, y3, x4, y4) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1, y1);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.lineTo(x3, y3);
-        this.ctx.lineTo(x4, y4);
-        this.ctx.lineTo(x1, y1);
-        this.ctx.closePath();
-        this.ctx.fill();
+        // this.ctx.beginPath();
+        // this.ctx.moveTo(x1, y1);
+        // this.ctx.lineTo(x2, y2);
+        // this.ctx.lineTo(x3, y3);
+        // this.ctx.lineTo(x4, y4);
+        // this.ctx.lineTo(x1, y1);
+        // this.ctx.closePath();
+        // this.ctx.fill(); //TODO:
 
         return this;
     },
@@ -335,15 +343,10 @@ const JsMB = {
      * @returns {this}
      */
     drawRect4(x1, y1, x2, y2, x3, y3, x4, y4) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1, y1);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.lineTo(x3, y3);
-        this.ctx.lineTo(x4, y4);
-        this.ctx.lineTo(x1, y1);
-        this.ctx.closePath();
-        this.ctx.stroke();
-        this.ctx.fill();
+        this.drawLine(x1, y1, x2, y2);
+        this.drawLine(x2, y2, x3, y3);
+        this.drawLine(x3, y3, x4, y4);
+        this.drawLine(x4, y4, x1, y1);
 
         return this;
     },
