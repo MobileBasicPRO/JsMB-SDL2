@@ -5,7 +5,7 @@
  * ================================//
  */
 
- //JsMB-SDL2 Alpha 11
+//JsMB-SDL2 Alpha 11
 
 'use strict';
 
@@ -27,6 +27,11 @@ const JsMB = {
     '$Font': {
         'family': 'arial',
         'size': '10'
+    },
+    '$Draw': {
+        'color': null,
+        'BGCOLOR': [255, 0, 0, 0],
+        'linewidth': 1
     },
     '$JsMobileBasic': {
         'name': 'JsMobileBasic',
@@ -92,22 +97,22 @@ const JsMB = {
 
         // if ($Config.type === 'graphics') {
 
-            this.$JsMobileBasic.graphics = true;
-            this.debug('Используется графика!', 'background:black;color:yellow;');
+        this.$JsMobileBasic.graphics = true;
+        this.debug('Используется графика!', 'background:black;color:yellow;');
 
-            this.c = new SDL.window();
-            //    this.$JsMobileBasic.canvas = this.c;
+        this.c = new SDL.window();
+        //    this.$JsMobileBasic.canvas = this.c;
 
-            this.ctx = this.c.render;
-            this.gfx = this.ctx.gfx;
-            if ($Config.canvas_size[0] === '*' && $Config.canvas_size[1] === '*') {
-                // this.debug('Canvas растянут на весь экран', 'background:black;color:#00ff00;');
-                this.c.size = { h: 480, w: 640 }; // TODO: FullScreen
-            } else {
-                // this.debug(this.$Config.canvas_size);
-                // [this.c.width, this.c.height] = $Config.canvas_size;
-                this.c.size = { h: $Config.canvas_size[1], w: $Config.canvas_size[0] };
-            }
+        this.ctx = this.c.render;
+        this.gfx = this.ctx.gfx;
+        if ($Config.canvas_size[0] === '*' && $Config.canvas_size[1] === '*') {
+            // this.debug('Canvas растянут на весь экран', 'background:black;color:#00ff00;');
+            this.c.size = { h: 480, w: 640 }; // TODO: FullScreen
+        } else {
+            // this.debug(this.$Config.canvas_size);
+            // [this.c.width, this.c.height] = $Config.canvas_size;
+            this.c.size = { h: $Config.canvas_size[1], w: $Config.canvas_size[0] };
+        }
         // } else {
         //     this.debug('Графика не используется!', 'background:black;color:yellow;');
         //     this.c = supports.window ? window : null;
@@ -116,6 +121,7 @@ const JsMB = {
         // }
 
         this.setLineWidth(1);
+        this.setColor([0, 0, 0, 0.9]);
 
         this.debug('Имя проекта: ' + $Config.name, 'background:brown;color:yellow;');
 
@@ -130,7 +136,8 @@ const JsMB = {
      * @returns {this}
      */
     setColor(color) {
-        this.ctx.color = color;
+        this.$Draw.color = new JsMB._Color(color);
+        this.ctx.color = this.$Draw.color.getNumber();
         return this;
     },
 
@@ -139,7 +146,7 @@ const JsMB = {
      * @returns {this}
      */
     setLineWidth(width) {
-        this._lineWidth = width;
+        this.$Draw.linewidth = width;
         return this;
     },
 
@@ -191,6 +198,7 @@ const JsMB = {
      * @returns {this}
      */
     fillScreen(color) {
+        debugger;
         const tmp = this.ctx.color;
         this.setColor(color);
         this.fillRect(0, 0, this.screenWidth(), this.screenHeight());
@@ -275,14 +283,14 @@ const JsMB = {
      * @returns {this}
      */
     drawArc(x, y, radius,
-            startAngle,// = (15 * Math.PI / 7),
-            endAngle,// = (13 * Math.PI / 2),
-            counterClockwise = false) {
+        startAngle,// = (15 * Math.PI / 7),
+        endAngle,// = (13 * Math.PI / 2),
+        counterClockwise = false) {
 
-        if(!startAngle) {
-            this.gfx.ellipse(x, y, radius, radius, this.ctx.color)
+        if (!startAngle) {
+            this.gfx.ellipse(x, y, radius, radius, this.$Draw.color.getNumber());
         } else {
-            this.gfx.pie(x, y, radius, this.deg(startAngle), this.deg(endAngle), this.ctx.color);
+            this.gfx.pie(x, y, radius, this.deg(startAngle), this.deg(endAngle), this.$Draw.color.getNumber());
         }
         return this;
     },
@@ -297,13 +305,15 @@ const JsMB = {
      * @returns {this}
      */
     fillArc(x, y, radius,
-            startAngle = (15 * Math.PI / 7),
-            endAngle = (13 * Math.PI / 2),
-            counterClockwise = false) {
+        startAngle, // = (15 * Math.PI / 7),
+        endAngle = (13 * Math.PI / 2),
+        counterClockwise = false) {
 
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
-        this.ctx.fill();
+        if (!startAngle) {
+            this.gfx.ellipseFilled(x, y, radius, radius, this.$Draw.color.getNumber());
+        } else {
+            this.gfx.pieFilled(x, y, radius, this.deg(startAngle), this.deg(endAngle), this.$Draw.color.getNumber());
+        }
         return this;
     },
 
@@ -520,7 +530,7 @@ const JsMB = {
      * @returns {string} "rgb(red, green, blue)"
      */
     rgb(red = 0, green = 0, blue = 0) {
-        return 'rgb(' + red + ',' + green + ',' + blue + ')';
+        return [255, red, green, blue];
     },
 
     /** Цвет в rgb
@@ -531,7 +541,7 @@ const JsMB = {
      * @returns {string} "rgba(red, green, blue, alpha)"
      */
     rgba(red = 0, green = 0, blue = 0, alpha = 0) {
-        return 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')';
+        return [red, green, blue, alpha];
     },
 
     // Гели/спрайты
@@ -1090,6 +1100,90 @@ const JsMB = {
     exit() {
         window.close();
         return this;
+    },
+
+    _Color: class {
+        constructor(color) {
+            if (typeof color === 'number') {
+                this._color = {
+                    a: (color >> 24) & 0xFF,
+                    r: (color >> 16) & 0xFF,
+                    g: (color >> 8) & 0xFF,
+                    b: (color >> 0) & 0xFF
+                }
+            }
+            else if (typeof color === 'object') {
+                if(color instanceof JsMB._Color) {
+                    this._color = color._color;
+                }
+                else if (color instanceof Array) {
+                    if (color.length === 4) {
+                        if (color[3] > 0 && color[3] <= 1) {
+                            //Css RGBA format
+                            this._color = {
+                                a: (color[3] * 1000) & 0xFF,
+                                r: color[0],
+                                g: color[1],
+                                b: color[2]
+                            }
+                        }
+                        else {
+                            //[TEMP] SDL ARGB format
+                            this._color = {
+                                a: color[0],
+                                r: color[1],
+                                g: color[2],
+                                b: color[3]
+                            }
+                        }
+                    }
+                    else {
+                        //TODO: RGB
+                        JsMB.debug(`[COLOR] Неизвестный формат массива цвета!`);
+                        this._color = { a: 0, r: color[0] || 0, g: color[1] || 0, b: color[2] || 0 };
+                    }
+                }
+
+                else if (color.r + 1 && color.g + 1 && color.b + 1 && color.a + 1) {
+                    this._color = color;
+                }
+
+                else {
+                    JsMB.debug(`[COLOR] Неизвестный формат цвета!`);
+                    this._color = { a: 0, r: 0, g: 0, b: 0 };
+                }
+            }
+        }
+
+        getRgbArray() {
+            const c = this._color;
+            return [c.r, c.g, c.b];
+        }
+
+        getArgbArray() {
+            const c = this._color;
+            return [c.a, c.r, c.g, c.b];
+        }
+
+        getHex() {}
+
+        getNumber() {
+            //FIXME: Можно проще
+            const c = this._color;
+            let a = c.a.toString(16)
+                a = a.length === 1 ? '0'+a : a;
+            let r = c.r.toString(16)
+                r = r.length === 1 ? '0' + r : r;
+            let g = c.g.toString(16)
+                g = g.length === 1 ? '0' + g : g;
+            let b = c.b.toString(16)
+                b = b.length === 1 ? '0' + b : b;
+            return Number(`0x${a}${r}${g}${b}`);
+        }
+
+        getObject() {
+            return this._color;
+        }
     },
 
     // Обработчики событий

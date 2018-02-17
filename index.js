@@ -9,5 +9,7 @@ JsMB
     .drawLine(0,0,JsMB.screenWidth(), JsMB.screenHeight())
     .setColor(0xFF0000FF)
     .drawArc(JsMB.screenWidth() / 2, JsMB.screenHeight() / 2, 25)
+    .setColor(0xFFFFFFFF)//[255,255,255,255])
+    .fillArc(JsMB.screenWidth() / 2, JsMB.screenHeight() / 2, 22)
     .repaint();
 setInterval(()=>{},1000);
