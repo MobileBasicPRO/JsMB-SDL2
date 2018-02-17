@@ -30,7 +30,7 @@ const JsMB = {
     },
     '$Draw': {
         'color': null,
-        'BGCOLOR': [255, 0, 0, 0],
+        'BGCOLOR': [255, 255, 255, 255],
         'linewidth': 1
     },
     '$JsMobileBasic': {
@@ -66,10 +66,6 @@ const JsMB = {
     /** Преобразование градусов в радиан (PI / 180)
      */
     'DEG2RAD': Math.PI / 180,
-
-    /** Цвет фона по умолчанию
-     */
-    'BGCOLOR': 0xFF000000,
 
     __preinit() {
         for (const i in this) {
@@ -237,7 +233,7 @@ const JsMB = {
      */
     clearRect(x, y, w, h) {
         const tmp = this.ctx.color;
-        this.setColor(this.BGCOLOR);
+        this.setColor(this.$Draw.BGCOLOR);
         this.fillRect(x, y, w, h);
         this.ctx.color = tmp;
         return this;
@@ -251,7 +247,7 @@ const JsMB = {
      * @returns {this}
      */
     drawLine(x1, y1, x2, y2) {
-        this.gfx.line(x1, y1, x2, y2, this.ctx.color, this._lineWidth);
+        this.gfx.line(x1, y1, x2, y2, this.ctx.color, this.$Draw._lineWidth);
         return this;
     },
 
