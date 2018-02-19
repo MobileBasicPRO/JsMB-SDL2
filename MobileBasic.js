@@ -96,7 +96,11 @@ const JsMB = {
         this.$JsMobileBasic.graphics = true;
         this.debug('Используется графика!', 'background:black;color:yellow;');
 
-        this.c = new SDL.window();
+        this.c = new SDL.window({
+            closable: true,
+            title: 'JsMobileBasic'
+        });
+
         //    this.$JsMobileBasic.canvas = this.c;
 
         this.ctx = this.c.render;
@@ -249,7 +253,8 @@ const JsMB = {
      * @returns {this}
      */
     drawLine(x1, y1, x2, y2) {
-        this.gfx.line(x1, y1, x2, y2, this.ctx.color, this.$Draw._lineWidth);
+        if(x1 === Infinity || x2 === Infinity || y1 === Infinity || y2 === Infinity) return this;
+        this.gfx.line(x1, y1, x2, y2, this.$Draw.color.getNumber(), this.$Draw._lineWidth);
         return this;
     },
 
@@ -1100,6 +1105,14 @@ const JsMB = {
 
     _Color: class {
         constructor(color) {
+            {
+                this.getRgbArray = this.getRgbArray.bind(this);
+                this.getArgbArray = this.getArgbArray.bind(this);
+                this.getHex = this.getHex.bind(this);
+                this.getNumber = this.getNumber.bind(this);
+                this.getObject = this.getObject.bind(this);
+            }
+            this._color = { a: 0, r: 0, g: 0, b: 0 };
             if (typeof color === 'number') {
                 this._color = {
                     a: (color >> 24) & 0xFF,
