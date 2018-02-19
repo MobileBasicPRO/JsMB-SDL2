@@ -185,7 +185,10 @@ const JsMB = {
      * @returns {this}
      */
     cls() {
+        const tmp = this.$Draw.color;
+        this.setColor(0xFFFFFFFF);
         this.ctx.clear();
+        this.setColor(tmp);
         return this;
     },
 
@@ -194,7 +197,6 @@ const JsMB = {
      * @returns {this}
      */
     fillScreen(color) {
-        debugger;
         const tmp = this.ctx.color;
         this.setColor(color);
         this.fillRect(0, 0, this.screenWidth(), this.screenHeight());
